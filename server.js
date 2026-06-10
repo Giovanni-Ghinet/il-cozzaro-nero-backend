@@ -3,6 +3,7 @@ import notFound from './Middlewears/notFound.js';
 import errorsHandler from './Middlewears/errorsHandler.js';
 import recensioni from './Routers/recensioni.js';
 import categorie from './Routers/categorie.js'
+import products from './Routers/products.js';
 
 
 const SERVER_PORT = process.env.SERVER_PORT;
@@ -13,10 +14,7 @@ const app = express();
 app.use(express.json());
 app.use('/categories', categorie);
 app.use('/reviews', recensioni);
-
-
-
-
+app.use('/products', products);
 
 app.use(errorsHandler);
 app.use(notFound);
