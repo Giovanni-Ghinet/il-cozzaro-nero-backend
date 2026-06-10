@@ -1,6 +1,6 @@
 import express, { request, response } from 'express'
 import idValidator from '../Middlewears/idValidator.js';
-
+import destroy from '../Controllers/recensioniControllers.js';
 
 
 
