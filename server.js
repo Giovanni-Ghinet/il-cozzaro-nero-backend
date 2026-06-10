@@ -16,7 +16,7 @@ app.use('/reviews', recensioni);
 
 
 
-app.use(errorHandler);
+app.use(errorsHandler);
 app.use(notFound);
 app.listen(SERVER_PORT, (error) =>{
     if(error){
