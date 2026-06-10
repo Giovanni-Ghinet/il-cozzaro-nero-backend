@@ -1,4 +1,4 @@
-import { idCheck } from "../Utils/function";
+import { idCheck } from "../Utils/function.js";
 
 
 

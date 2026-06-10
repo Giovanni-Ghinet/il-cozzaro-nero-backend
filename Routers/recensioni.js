@@ -1,5 +1,5 @@
 import express, { request, response } from 'express'
-import idValidator from '../Middlewears/idValidator';
+import idValidator from '../Middlewears/idValidator.js';
 
 
 
