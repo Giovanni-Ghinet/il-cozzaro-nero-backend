@@ -1,10 +1,12 @@
 import express from 'express';
-import productController from './Controllers/productController.js';
+import idValidator from './Middlewears/idValidator.js';
+import {index} from './Controllers/productController.js';
+import {show} from './Controllers/productController.js'; 
 
 const app = express();
 
-app.get('/products', productController.index);
-app.get('/products/:id', productController.show);
+app.get('/products', index);
+app.get('/products/:id', idValidator, show);
 
 export default app;
 

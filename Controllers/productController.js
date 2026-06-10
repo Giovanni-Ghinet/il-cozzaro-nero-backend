@@ -2,7 +2,7 @@ import { Connection } from '../Utils/connection.js';
 
 const mysql = require('mysql2/promise');
 
-const index = async (request, response) => {
+export const index = async (request, response) => {
     try{
         const [rows] = await connection.execute('SELECT * FROM products');
         response.json(rows);
@@ -11,8 +11,8 @@ const index = async (request, response) => {
     }
 };
 
-const show = async (request, response) => {
-    const id = request.params.id;
+export const show = async (request, response) => {
+    const id = request.validatedId;
     try {
         const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
         if(rows.length === 0){
@@ -24,4 +24,3 @@ const show = async (request, response) => {
     }
 };
 
-export default {index, show};
