@@ -1,5 +1,5 @@
 import { connection } from '../Utils/connection.js';
-import mysql from 'mysql2/promise';
+
 
 export const index = async (request, response) => {
     try{
