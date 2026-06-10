@@ -1,6 +1,6 @@
 import express, { request, response } from 'express'
-import notFound from './middlewares/notFound.js';
-import errorHandler from './middlewares/errorHandler.js';
+import notFound from './Middlewears/notFound.js';
+import errorsHandler from './Middlewears/errorsHandler.js';
 import recensioni from './Routers/recensioni.js';
 
 const SERVER_PORT = process.env.SERVER_PORT;
