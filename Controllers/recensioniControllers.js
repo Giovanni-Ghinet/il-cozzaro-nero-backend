@@ -125,7 +125,7 @@ async function destroy(request, response) {
 
         const id = request.validatedId;
 
-        const sql = "DELETE FROM recensioni WHERE id = ?";
+        const sql = "DELETE FROM reviews WHERE id = ?";
 
         const [result] = await connection.execute(sql, [id]);
         if (result.affectedRows > 0){   
