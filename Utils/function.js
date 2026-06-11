@@ -28,10 +28,10 @@ const keyValidator = (obj) => {
 const valueValidator = (obj) => {
     const { title, text, author, valutation, product } = obj;
 
-    if (typeof title !== 'string' || title.trim() === '') return false;
+    if (typeof title !== 'string' || title.trim() === '' || title.length > 200) return false;
     if (typeof text !== 'string' || text.trim() === '') return false;
-    if (typeof author !== 'string' || author.trim() === '') return false;
-    if (typeof product !== 'string' || product.trim() === '') return false;
+    if (typeof author !== 'string' || author.trim() === ''|| author.length > 200) return false;
+    if (typeof product !== 'string' || product.trim() === ''|| product.length > 200) return false;
     if (typeof valutation !== 'number' || valutation < 0 || valutation > 5 || Number.isNaN(valutation)) return false;
 
     return true;

@@ -9,7 +9,7 @@ function bodyValidator (request,response,next) {
             response
                 .status(400)
                 .json({
-                    error: "l'ogetto passato non rispetta i parametri richiesti",
+                    error: "l'oggetto passato non rispetta i parametri richiesti",
                     result: null
                 })
             return

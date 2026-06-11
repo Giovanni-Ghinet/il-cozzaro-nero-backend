@@ -65,7 +65,7 @@ CREATE
 */
 async function store(request, response) {
 
-    
+
     try {
         const newReviews = { ...request.body };
         const { product } = newReviews;
@@ -83,22 +83,22 @@ async function store(request, response) {
                 });
             return
         }
-        
-        const reviews = {...newReviews, product:productId[0].id};
+
+        const reviews = { ...newReviews, product: productId[0].id };
         const queryInsertReviews = `
         INSERT INTO reviews (valutation, text, id_product, author, title) VALUES
             (?, ?, ?, ?, ?);
         `;
-        const {valutation, text, product: id_product, author, title} = reviews;
+        const { valutation, text, product: id_product, author, title } = reviews;
         const [result] = await connection.execute(queryInsertReviews, [valutation, text, id_product, author, title]);
-        if (result.affectedRows > 0){
+        if (result.affectedRows > 0) {
             response
                 .json({
                     error: null,
                     result: "Recensione inserita con successo"
                 });
             return
-        }else{
+        } else {
             response
                 .status(400)
                 .json({
@@ -120,25 +120,38 @@ async function store(request, response) {
 /*
 DESTROY
 */
-function destroy(req, res) {
-    const id = req.params.id;
+async function destroy(request, response) {
+    try {
 
-    const sql = "DELETE FROM recensioni WHERE id = ?";
+        const id = request.validatedId;
 
-    connection.query(sql, [id], (err, result) => {
+        const sql = "DELETE FROM recensioni WHERE id = ?";
 
-        if (err) {
-            return res.status(500).json({
-                error: "Errore del server"
+        const [result] = await connection.execute(sql, [id]);
+        if (result.affectedRows > 0){   
+            response
+            .status(204)
+            .json({
+                error: null,
+                message: "Recensione eliminata"
             });
+        }else{
+            response
+                .status(400)
+                .json({
+                    error: "richiesta errata",
+                    result: null
+                })
         }
-
-        res.json({
-            message: "Recensione eliminata"
-        });
-    });
+    } catch (error) {
+        response
+            .status(500)
+            .json({
+                error: "errore durante l'eliminazione del dato dal database",
+                result: null
+            });
+    }
 }
 
 
-
-export {destroy,index,show,store};
+    export { destroy, index, show, store };

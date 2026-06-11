@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS `categories`;
 
 CREATE TABLE `products`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL UNIQUE,
     `description` TEXT NOT NULL,
     `price` DECIMAL(8, 2) NOT NULL,
     `country` VARCHAR(255) NOT NULL,

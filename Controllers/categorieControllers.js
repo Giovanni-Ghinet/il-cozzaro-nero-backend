@@ -1,5 +1,5 @@
 import { connection } from "../Utils/connection.js";
-import idValidator from "../Middlewears/idValidator.js";
+
 
 async function index(request, response) {
     try {
