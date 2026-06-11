@@ -9,9 +9,14 @@ INDEX
 */
 async function index(request, response) {
     try {
-        const sql = "SELECT * FROM reviews";
+        const sql = `
+            SELECT r.title, r.valutation, r.text, r.author, p.name AS product_name
+            FROM reviews r
+            JOIN products p 
+                ON r.id_product = p.id`;
 
         const [results] = await connection.query(sql);
+        
 
         response.status(200).json({
             error: null,
@@ -34,9 +39,14 @@ async function show(request, response) {
     try {
         const id = request.validatedId;
 
-        const sql = "SELECT * FROM reviews WHERE id = ?";
+        const sql = `
+            SELECT r.title, r.valutation, r.text, r.author, p.name AS product_name
+            FROM reviews r
+            JOIN products p 
+                ON r.id_product = p.id
+            WHERE r.id = ?;`
 
-        const [results] = await connection.query(sql, [id]);
+        const [results] = await connection.execute(sql, [id]);
 
         if (results.length === 0) {
             return response.status(404).json({

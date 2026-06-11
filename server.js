@@ -4,13 +4,14 @@ import errorsHandler from './Middlewears/errorsHandler.js';
 import recensioni from './Routers/recensioni.js';
 import categorie from './Routers/categorie.js'
 import products from './Routers/products.js';
-
+import cors from 'cors';
 
 const SERVER_PORT = process.env.SERVER_PORT;
 const SERVER_URL = process.env.SERVER_URL;
 
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use('/categories', categorie);
 app.use('/reviews', recensioni);
