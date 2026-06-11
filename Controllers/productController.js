@@ -1,5 +1,5 @@
 import { connection } from '../Utils/connection.js';
-import { normalizingData } from '../Utils/function.js';
+import { normalizingProducts } from '../Utils/function.js';
 
 
 export const index = async (request, response) => {
@@ -16,11 +16,11 @@ export const index = async (request, response) => {
             order by created_at;
         `;
         const [rows] = await connection.execute(queryProductIndex);
-        const productList = normalizingData(rows);
+        const productsList = normalizingProducts(rows);
         response
             .json({
                 error: null,
-                result:productList
+                result:productsList
             });
     }catch(error){
         response
@@ -35,7 +35,18 @@ export const index = async (request, response) => {
 export const show = async (request, response) => {
     const id = request.validatedId;
     try {
-        const [rows] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
+        const queryProductShow = `
+                select p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,r.id as id_review, r.author, r.title, r.text, r.valutation, c.name as category
+                from products p
+                    join reviews r
+                        on r.id_product = p.id
+                    join product_category pt
+                        on pt.id_product = p.id
+                    join categories c
+                        on c.id = pt.id_category
+                where p.id = ?;
+            `;
+        const [rows] = await connection.execute(queryProductShow, [id]);
         if(rows.length === 0){
             return response
                 .status(404)
@@ -44,10 +55,12 @@ export const show = async (request, response) => {
                     result: null
                 });
         }
+        const searchedProduct = normalizingProducts(rows);
+        console.log(searchedProduct)
         response
             .json({
                 error: null,
-                result: rows[0]
+                result: searchedProduct
             });
     } catch (error) {
         response

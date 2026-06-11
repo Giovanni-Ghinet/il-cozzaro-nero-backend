@@ -45,7 +45,7 @@ export const validator = (obj) => {
 
 
 
-export function normalizingData(dataArray) {
+export function normalizingProducts(dataArray) {
     const productsMap = {};
     const IMAGE_PREFIX = "http://localhost:3000/";
 
