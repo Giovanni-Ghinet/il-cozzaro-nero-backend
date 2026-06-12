@@ -4,7 +4,7 @@ const defaultOBJReceived = {
     title: "",
     text: "",
     author: "",
-    valutation: null,
+    latest: null,
     product: ""
 };
 
@@ -26,13 +26,13 @@ const keyValidator = (obj) => {
 }
 
 const valueValidator = (obj) => {
-    const { title, text, author, valutation, product } = obj;
+    const { title, text, author, latest, product } = obj;
 
     if (typeof title !== 'string' || title.trim() === '' || title.length > 200) return false;
     if (typeof text !== 'string' || text.trim() === '') return false;
     if (typeof author !== 'string' || author.trim() === '' || author.length > 200) return false;
     if (typeof product !== 'string' || product.trim() === '' || product.length > 200) return false;
-    if (typeof valutation !== 'number' || valutation < 0 || valutation > 5 || Number.isNaN(valutation)) return false;
+    if (typeof latest !== 'number' || latest < 0 || latest > 5 || Number.isNaN(latest)) return false;
 
     return true;
 }
@@ -51,7 +51,7 @@ export function normalizingProducts(dataArray) {
 
     for (const product of dataArray) {
 
-        const { id_review, author, title, text, valutation, image, price, created_at,  ...productData } = product;
+        const { id_review, author, title, text, latest, image, price, created_at, ...productData } = product;
         const productName = product.name;
         const priceConverted = Number(price);
 
@@ -59,7 +59,7 @@ export function normalizingProducts(dataArray) {
             const formattedDate = created_at ? new Date(created_at).toLocaleDateString('it-IT') : null;
             productsMap[productName] = {
                 ...productData,
-                created_at:formattedDate,
+                created_at: formattedDate,
                 price: priceConverted,
                 image: image ? `${IMAGE_PREFIX}${image}` : "https://placehold.co/600x400/png",
                 reviews: []
@@ -67,10 +67,23 @@ export function normalizingProducts(dataArray) {
         }
 
         if (id_review !== undefined && id_review !== null) {
-            const review = { id_review, author, title, text, valutation };
+            const review = { id_review, author, title, text, latest };
             productsMap[productName].reviews.push(review);
         }
     }
 
     return Object.values(productsMap);
+}
+
+
+export function latestCheck(obj) {
+    if (!obj || typeof obj !== 'object') return false;
+    const chiavi = Object.keys(obj);
+    if (chiavi.length !== 1 || chiavi[0] !== 'latest') return false;
+    const { latest } = obj;
+    if (typeof latest !== 'string' && typeof latest !== 'number') return false;
+    if (typeof latest === 'string' && latest.trim() === '') return false;
+    const numero = Number(latest);
+    if (Number.isNaN(numero)) return false;
+    return true;
 }

@@ -1,28 +1,58 @@
 import { connection } from '../Utils/connection.js';
 import { normalizingProducts } from '../Utils/function.js';
+import { latestCheck } from '../Utils/function.js';
 
 
 export const index = async (request, response) => {
-    try{
-        const queryProductIndex = `
+    const { latest } = latestCheck(request.query) ? request.query : {};
+    const latestNumber = latest ? Number(latest) : null;
+    let queryProductIndex = "";
+    let productsList = null;
+    try {
+        if (!latest) {
+            queryProductIndex = `
             select p.id, p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,r.id as id_review, r.author, r.title, r.text, r.valutation, c.name as category
             from products p
-                join reviews r
-                    on r.id_product = p.id
-                join product_category pt
-                    on pt.id_product = p.id
-                join categories c
-                    on c.id = pt.id_category
+            join reviews r
+            on r.id_product = p.id
+            join product_category pt
+            on pt.id_product = p.id
+            join categories c
+            on c.id = pt.id_category
             order by created_at;
-        `;
-        const [rows] = await connection.execute(queryProductIndex);
-        const productsList = normalizingProducts(rows);
+            `;
+
+            const [rows] = await connection.execute(queryProductIndex);
+            productsList = normalizingProducts(rows);
+        } else {
+            queryProductIndex = `
+                select 
+                    p.id, p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,
+                    r.id as id_review, r.author, r.title, r.text, r.valutation, 
+                    c.name as category
+                from (
+                    select * 
+                    from products 
+                    order by created_at desc 
+                    limit ?
+                    ) p
+                    join reviews r 
+                        ON r.id_product = p.id
+                    join product_category pt 
+                        on pt.id_product = p.id
+                    join categories c 
+                        on c.id = pt.id_category
+                    order by p.created_at desc
+                    `;
+            const [rows] = await connection.execute(queryProductIndex, [latest]);
+            productsList = normalizingProducts(rows);
+        }
         response
             .json({
                 error: null,
-                result:productsList
+                result: productsList
             });
-    }catch(error){
+    } catch (error) {
         response
             .status(500)
             .json({
@@ -47,7 +77,7 @@ export const show = async (request, response) => {
                 where p.id = ?;
             `;
         const [rows] = await connection.execute(queryProductShow, [id]);
-        if(rows.length === 0){
+        if (rows.length === 0) {
             return response
                 .status(404)
                 .json({
