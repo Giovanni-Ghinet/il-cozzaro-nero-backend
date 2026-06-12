@@ -51,7 +51,7 @@ export function normalizingProducts(dataArray) {
 
     for (const product of dataArray) {
 
-        const { id_review, author, title, text, latest, image, price, created_at, ...productData } = product;
+        const { id_review, author, title, text, latest, image, price, created_at, valutation, ...productData } = product;
         const productName = product.name;
         const priceConverted = Number(price);
 
@@ -67,7 +67,7 @@ export function normalizingProducts(dataArray) {
         }
 
         if (id_review !== undefined && id_review !== null) {
-            const review = { id_review, author, title, text, latest };
+            const review = { id_review, author, title, text, latest, valutation };
             productsMap[productName].reviews.push(review);
         }
     }
