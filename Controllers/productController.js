@@ -1,50 +1,33 @@
 import { connection } from '../Utils/connection.js';
 import { normalizingProducts } from '../Utils/function.js';
-import { latestCheck } from '../Utils/function.js';
+import { stringCheck } from '../Utils/function.js';
+import { queryProduct, queryProductLimit, queryProductSearch, queryProductShow } from '../Utils/query.js';
 
 
 export const index = async (request, response) => {
-    const { latest } = latestCheck(request.query) ? request.query : {};
-    const latestNumber = latest ? Number(latest) : null;
-    let queryProductIndex = "";
+    const { latest, search } = request.query || {};
+    const latestNumber = stringCheck(latest) ? Number(latest) : null;
+    const searchedString = stringCheck(search) ? search : null;
+
     let productsList = null;
     try {
-        if (!latest) {
-            queryProductIndex = `
-            select p.id, p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,r.id as id_review, r.author, r.title, r.text, r.valutation, c.name as category
-            from products p
-            join reviews r
-            on r.id_product = p.id
-            join product_category pt
-            on pt.id_product = p.id
-            join categories c
-            on c.id = pt.id_category
-            order by created_at;
-            `;
-
-            const [rows] = await connection.execute(queryProductIndex);
+        if (!Number.isNaN(latestNumber) && latestNumber !== null) {
+            const [rows] = await connection.execute(queryProductLimit, [latestNumber]);
+            productsList = normalizingProducts(rows);
+        } else if (searchedString !== null) {
+            const searchParam = `%${searchedString}%`;
+            const [rows] = await connection.execute(queryProductSearch, [searchParam, searchParam]);
+            if (rows.length === 0) {
+                response
+                    .status(404)
+                    .json({
+                        error: 'La ricerca non ha trovato prodotti',
+                        result: null
+                    });
+            }
             productsList = normalizingProducts(rows);
         } else {
-            queryProductIndex = `
-                select 
-                    p.id, p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,
-                    r.id as id_review, r.author, r.title, r.text, r.valutation, 
-                    c.name as category
-                from (
-                    select * 
-                    from products 
-                    order by created_at desc 
-                    limit ?
-                    ) p
-                    join reviews r 
-                        ON r.id_product = p.id
-                    join product_category pt 
-                        on pt.id_product = p.id
-                    join categories c 
-                        on c.id = pt.id_category
-                    order by p.created_at desc
-                    `;
-            const [rows] = await connection.execute(queryProductIndex, [latest]);
+            const [rows] = await connection.execute(queryProduct);
             productsList = normalizingProducts(rows);
         }
         response
@@ -65,17 +48,6 @@ export const index = async (request, response) => {
 export const show = async (request, response) => {
     const id = request.validatedId;
     try {
-        const queryProductShow = `
-                select p.id, p.name, p.description, p.price, p.country, p.image, p.availability, p.created_at,r.id as id_review, r.author, r.title, r.text, r.valutation, c.name as category
-                from products p
-                    join reviews r
-                        on r.id_product = p.id
-                    join product_category pt
-                        on pt.id_product = p.id
-                    join categories c
-                        on c.id = pt.id_category
-                where p.id = ?;
-            `;
         const [rows] = await connection.execute(queryProductShow, [id]);
         if (rows.length === 0) {
             return response

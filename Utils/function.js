@@ -76,14 +76,19 @@ export function normalizingProducts(dataArray) {
 }
 
 
-export function latestCheck(obj) {
-    if (!obj || typeof obj !== 'object') return false;
-    const chiavi = Object.keys(obj);
-    if (chiavi.length !== 1 || chiavi[0] !== 'latest') return false;
-    const { latest } = obj;
-    if (typeof latest !== 'string' && typeof latest !== 'number') return false;
-    if (typeof latest === 'string' && latest.trim() === '') return false;
-    const numero = Number(latest);
-    if (Number.isNaN(numero)) return false;
-    return true;
+export function stringCheck(string) {
+    return typeof string === 'string' && string.trim() !== '';
 }
+
+
+
+
+
+// if (!obj || typeof obj !== 'object') return false;
+//     const chiavi = Object.keys(obj);
+//     if (chiavi.length !== 1 || chiavi[0] !== 'latest') return false;
+//     const { latest } = obj;
+//     if (typeof latest !== 'string' && typeof latest !== 'number') return false;
+//     if (typeof latest === 'string' && latest.trim() === '') return false;
+//     const numero = Number(latest);
+//     if (Number.isNaN(numero)) return false;
